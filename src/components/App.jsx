@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { persistor } from './store/store';
+import { persistor } from '../store/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ContactForm } from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
@@ -8,7 +8,7 @@ import { Filter } from './Filter/Filter';
 import css from './App.module.css';
 
 export const App = () => {
-  const contacts = useSelector((state) => state.contacts.items);
+  const contacts = useSelector(state => state.contacts.items);
 
   useEffect(() => {
     persistor.persist();

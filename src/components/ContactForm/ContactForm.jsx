@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { addContact } from '../store/contactsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from '../../store/contactsSlice';
+import { getContacts } from '../../store/selectors';
+import { nanoid } from 'nanoid';
+import { toast } from 'react-toastify';
 import css from './ContactForm.module.css';
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -13,14 +17,34 @@ export const ContactForm = () => {
     setNumber('');
   };
 
-  const onChangeInput = (evt) => {
+  const onChangeInput = evt => {
     const { name, value } = evt.currentTarget;
     name === 'name' ? setName(value) : setNumber(value);
   };
 
-  const onSubmitForm = (evt) => {
+  const onSubmitForm = evt => {
     evt.preventDefault();
-    dispatch(addContact({ name, number }));
+
+    const contactName = name;
+    const contactNumber = number;
+
+    const isExist = contacts.some(
+      contact =>
+        contact.name.toLowerCase() === contactName.toLowerCase() ||
+        contact.number === contactNumber
+    );
+
+    if (isExist) {
+      return toast.warn(`${contactName} is already in contacts.`);
+    }
+
+    const contact = {
+      id: nanoid(),
+      name: contactName,
+      number: contactNumber,
+    };
+
+    dispatch(addContact(contact));
     resetForm();
   };
 
